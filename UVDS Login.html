@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unified Vulnerability Detection System</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+body{
+    background:#edf2ef;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
+    color:#192923;
+}
+.container{
+    width:100%;
+    max-width:410px;
+    background:#fff;
+    padding:30px;
+    border-radius:10px;
+    border:1px solid #dce5df;
+    box-shadow:0 12px 36px rgba(20,45,32,.08);
+}
+h2{
+    text-align:center;
+    color:#183b2b;
+    margin-bottom:10px;
+}
+p{
+    text-align:center;
+    color:#555;
+    font-size:14px;
+    margin-bottom:15px;
+}
+input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #ccc;
+    border-radius:8px;
+    outline:none;
+}
+input:focus{
+    border-color:#17834e;
+    box-shadow:0 0 0 3px rgba(23,131,78,.12);
+}
+.message{
+    text-align:center;
+    font-size:14px;
+    margin-top:12px;
+}
+.message:empty{
+    display:none;
+}
+.message[data-type="error"]{
+    color:#b42318;
+}
+.message[data-type="success"]{
+    color:#087443;
+}
+button{
+    width:100%;
+    padding:12px;
+    background:#176b43;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:16px;
+    margin-top:5px;
+}
+button:hover{
+    background:#105534;
+}
+.link{
+    text-align:center;
+    margin-top:12px;
+}
+.link a{
+    color:#176b43;
+    cursor:pointer;
+    text-decoration:none;
+    font-weight:bold;
+}
+#registerForm{
+    display:none;
+}
+.dashboard{
+    width:min(100%, 1080px);
+    display:none;
+}
+.dash-header{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:20px 24px;
+    background:#183b2b;
+    color:#fff;
+    border-radius:8px;
+}
+.brand-mark{
+    display:grid;
+    place-items:center;
+    width:48px;
+    height:48px;
+    flex:0 0 48px;
+    background:#b7e36b;
+    color:#183b2b;
+    font-weight:700;
+    border-radius:6px;
+}
+.brand-copy{
+    flex:1;
+    min-width:0;
+}
+.brand-copy p,.dash-intro p,.panel p{
+    text-align:left;
+}
+.brand-copy p{
+    color:#c2d4c8;
+    font-size:12px;
+    margin:0 0 4px;
+}
+.brand-copy h1{
+    font-size:18px;
+    font-weight:600;
+}
+.dash-user{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+.dash-user span{
+    font-size:14px;
+}
+.dash-user button{
+    width:auto;
+    padding:9px 13px;
+    margin:0;
+    background:transparent;
+    border:1px solid #759181;
+    font-size:14px;
+}
+.dash-user button:hover{
+    background:#28513b;
+}
+.dash-intro{
+    padding:34px 2px 20px;
+}
+.dash-intro p:first-child{
+    color:#528063;
+    font-weight:700;
+    font-size:12px;
+    text-transform:uppercase;
+    margin-bottom:8px;
+}
+.dash-intro h2{
+    text-align:left;
+    font-size:26px;
+    margin-bottom:8px;
+}
+.dash-intro p:last-child{
+    text-align:left;
+    margin:0;
+}
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:minmax(0, 1.5fr) minmax(250px, 1fr);
+    gap:16px;
+}
+.panel{
+    padding:22px;
+    border:1px solid #dce5df;
+    border-radius:8px;
+    background:#fff;
+}
+.panel h3{
+    color:#183b2b;
+    font-size:16px;
+    margin-bottom:14px;
+}
+.status-line{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-weight:700;
+    margin-bottom:12px;
+}
+.status-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#d98a22;
+}
+.panel p{
+    color:#59675f;
+    line-height:1.55;
+    font-size:14px;
+    margin:0;
+}
+.account-detail{
+    padding:12px 0;
+    border-top:1px solid #e7ede9;
+    font-size:14px;
+    overflow-wrap:anywhere;
+}
+.account-detail strong{
+    display:block;
+    color:#758078;
+    font-size:11px;
+    margin-bottom:4px;
+    text-transform:uppercase;
+}
+@media(max-width:680px){
+    body{padding:14px;align-items:flex-start}
+    .container{padding:22px}
+    .dash-header{flex-wrap:wrap;padding:16px}
+    .brand-copy h1{font-size:16px}
+    .dash-user{width:100%;justify-content:space-between}
+    .dashboard-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<main class="container" id="authPanel">
+
+<div id="loginForm">
+<h2>🔐 UVDS Login</h2>
+<p>Unified Vulnerability Detection System</p>
+
+<input type="text" id="loginUser" placeholder="Username" autocomplete="username" required>
+<input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" required>
+
+<button onclick="login()">Login</button>
+
+<div class="link">
+<a onclick="showRegister()">Create New Account</a>
+</div>
+</div>
+
+<div id="registerForm">
+<h2>🛡 Registration</h2>
+<p>Create your UVDS account</p>
+
+<input type="text" id="name" placeholder="Name" required>
+<input type="text" id="middleName" placeholder="Middle Name">
+<input type="text" id="lastName" placeholder="Last Name" required>
+<input type="tel" id="mobile" placeholder="Mobile Number" required>
+<input type="email" id="email" placeholder="Email" required>
+<input type="text" id="address" placeholder="Address" autocomplete="street-address" required>
+<input type="text" id="username" placeholder="Username" autocomplete="username" required>
+<input type="password" id="password" placeholder="Password (at least 8 characters)" autocomplete="new-password" minlength="8" required>
+
+<button onclick="register()">Register</button>
+
+<div class="link">
+<a onclick="showLogin()">Already have an account?</a>
+</div>
+</main>
+
+<div id="message" class="message" role="status" aria-live="polite"></div>
+
+<main class="dashboard" id="dashboard" aria-label="UVDS dashboard">
+<header class="dash-header">
+    <div class="brand-mark" aria-hidden="true">UVDS</div>
+    <div class="brand-copy">
+        <p>Unified Vulnerability Detection System</p>
+        <h1>Security workspace</h1>
+    </div>
+    <div class="dash-user">
+        <span id="headerUser"></span>
+        <button type="button" onclick="logout()">Sign out</button>
+    </div>
+</header>
+
+<section class="dash-intro">
+    <p>Workspace</p>
+    <h2>Security overview</h2>
+    <p>Your account is ready. Detection engine status and account details are shown below.</p>
+</section>
+
+<section class="dashboard-grid">
+    <article class="panel">
+        <h3>Detection engine</h3>
+        <div class="status-line"><span class="status-dot" aria-hidden="true"></span>Not configured</div>
+        <p>No vulnerability scanning engine is connected yet. Scanning controls will be available after an authorized detection engine is integrated.</p>
+    </article>
+    <article class="panel">
+        <h3>Account</h3>
+        <div class="account-detail"><strong>Name</strong><span id="accountName"></span></div>
+        <div class="account-detail"><strong>Email</strong><span id="accountEmail"></span></div>
+    </article>
+</section>
+</main>
+
+<script>
+function setMessage(text, type = ""){
+    const message = document.getElementById("message");
+    message.textContent = text;
+    message.dataset.type = type;
+}
+
+function showDashboard(user){
+    document.getElementById("authPanel").style.display = "none";
+    document.getElementById("message").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    document.getElementById("headerUser").textContent = user.name;
+    document.getElementById("accountName").textContent = user.name;
+    document.getElementById("accountEmail").textContent = user.email;
+}
+
+function showAuth(){
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("authPanel").style.display = "block";
+    document.getElementById("message").style.display = "block";
+}
+
+function showRegister(){
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "block";
+    setMessage("");
+}
+
+function showLogin(){
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("loginForm").style.display = "block";
+    setMessage("");
+}
+
+async function sendRequest(path, data){
+    const response = await fetch(path, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    });
+    const result = await response.json();
+    if(!response.ok){
+        throw new Error(result.error || "The request could not be completed.");
+    }
+    return result;
+}
+
+async function checkSession(){
+    try{
+        const response = await fetch("/api/me");
+        if(response.ok){
+            const result = await response.json();
+            showDashboard(result.user);
+        }
+    }catch(error){
+        setMessage("Cannot connect to the UVDS server.", "error");
+    }
+}
+
+async function register(){
+    const requiredFields = ["name", "lastName", "mobile", "email", "address", "username", "password"];
+    for(const id of requiredFields){
+        if(!document.getElementById(id).reportValidity()) return;
+    }
+
+    const account = {
+        name: document.getElementById("name").value,
+        middle_name: document.getElementById("middleName").value,
+        last_name: document.getElementById("lastName").value,
+        mobile: document.getElementById("mobile").value,
+        email: document.getElementById("email").value,
+        address: document.getElementById("address").value,
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+    };
+
+    try{
+        await sendRequest("/api/register", account);
+        document.getElementById("loginUser").value = account.username;
+        showLogin();
+        setMessage("Account created. You can now sign in.", "success");
+    }catch(error){
+        setMessage(error.message, "error");
+    }
+}
+
+async function login(){
+    const username = document.getElementById("loginUser");
+    const password = document.getElementById("loginPass");
+    if(!username.reportValidity() || !password.reportValidity()) return;
+
+    try{
+        const result = await sendRequest("/api/login", {username: username.value, password: password.value});
+        showDashboard(result.user);
+    }catch(error){
+        setMessage(error.message, "error");
+    }
+}
+
+async function logout(){
+    try{
+        await sendRequest("/api/logout", {});
+        showAuth();
+        document.getElementById("loginPass").value = "";
+        setMessage("You have signed out.", "success");
+    }catch(error){
+        setMessage(error.message, "error");
+    }
+}
+
+checkSession();
+</script>
+
+</body>
+</html>
